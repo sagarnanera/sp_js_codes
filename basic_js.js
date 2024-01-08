@@ -1,8 +1,8 @@
 // // variable type
 
-// const sp = "sp"; // can't mutate this afterwords, function scoped, block scoped
-// var sp1 = "sp1"; // will be declared in global scope
-// let sp2 = "sp2"; // able to mutate ,function scoped, block scoped
+// const sp = "sp"; // Cannot be reassigned, block-scoped, function-scoped
+// var sp1 = "sp1"; // Declared in the global scope
+// let sp2 = "sp2"; // Can be reassigned, block-scoped
 
 // // operators
 //     // arithmetic opts
