@@ -11,14 +11,14 @@ const obj2 = { hair: "lonG", beard: true };
 const compareObjects = (obj1, obj2) => {
   for (const key in obj1) {
     if (Object.hasOwnProperty.call(obj2, key)) {
-      if (obj1[key] !== obj2[key]) return false;  // assuming the comparison should be case sensitive
+      if (obj1[key] !== obj2[key]) return false; // assuming the comparison should be case sensitive
     }
   }
 
   return true;
 };
 
-console.log(compareObjects(obj1,obj2));
+console.log(compareObjects(obj1, obj2));
 
 // 2.​ Write a program to convert string to a 2D array of objects. The first row of the
 // string is used as the title.
@@ -28,27 +28,34 @@ console.log(compareObjects(obj1,obj2));
 
 // solution
 const convertTo2dArray = (inputStr) => {
+  const [keys, ...values] = inputStr.split("\n");
 
-    const [keys,...values] = inputStr.split("\n");
+  const keysArr = keys.split(",");
 
-    const keysArr = keys.split(',');
+  const res = [];
+  // for (let index = 0; index < values.length; index++) {
+  //   let value = values[index].split(",");
+  //   let temp = {};
+  //   for (let j = 0; j < keysArr.length; j++) {
+  //     temp[keysArr[j]] = value[j];
+  //   }
+  //   res.push(temp);
+  // }
 
-    const res= [];
-    for (let index = 0; index < values.length; index++) {
-        let value = values[index].split(',');
-        let temp = {};
-        for (let j=0;j<keysArr.length;j++) {
-            temp[keysArr[j]] = value[j];
-        }
-        res.push(temp);
+  values.forEach((val) => {
+    const vals = val.split(",");
+    let temp = {};
+    keysArr.forEach((key, index) => {
+      temp[key] = vals[index];
+    });
 
-    }
+    res.push(temp);
+  });
 
-    console.log(res);
-
+  console.log(res);
 };
 
-convertTo2dArray('col1,col2,col3\na,b,x\nc,d,y')
+convertTo2dArray("col1,col2,col3\na,b,x\nc,d,y");
 
 // 3. Write a program to convert an array of objects to a string. That contains
 // dynamic columns and de​limiter​ specified.
@@ -58,20 +65,36 @@ convertTo2dArray('col1,col2,col3\na,b,x\nc,d,y')
 
 // solution
 const convertToString = (objArr) => {
+  const keys = new Set();
+  const values = [];
 
-    const keys = new Set();
-    const values = [];
+  // for (const obj of objArr) {
+  //   keys.add(Object.keys(obj).join(","));
+  //   values.push(Object.values(obj).join(","));
+  // }
 
-    for (const obj of objArr) {
-        keys.add(Object.keys(obj).join(','));
-        values.push(Object.values(obj).join(','))
-    }
+  objArr.forEach((obj) => {
+    Object.keys(obj).forEach((key) => {
+      keys.add(key);
+    });
+  });
 
-    console.log([...keys,...values].join('\\n'));
+  objArr.forEach((obj) => {
+    Object.keys(obj).forEach((key) => {
+      keys.add(key);
+    });
+    values.push([...keys].map((key) => (obj[key] ? obj[key] : "undefined")));
+  });
 
+  console.log(`${[...keys].join(",")}\\n${values.join("\\n")}`);
+
+  return `${[...keys].join(",")}\\n${values.join("\\n")}`;
 };
 
-convertToString([{col1: 'a', col2: 'b',col3:'x'},{col1: 'c', col2: 'd',col3:'y'}])
+convertToString([
+  { col1: "a", col2: "b", col3: "x" },
+  { col1: "c", col2: "d", col3: "y", col4: "n" }
+]);
 
 // 4.Write a program to combine the numbers of a given array into an array
 // containing all combinations. (​reduce​)
@@ -102,16 +125,24 @@ const input = [1, 2];
 
 const combine = (input) => {
   let result = [[]];
-  for (let i = 0; i < input.length; i++) {
+  // for (let i = 0; i < input.length; i++) {
+  //   let temp = [];
+  //   for (let j = 0; j < result.length; j++) {
+  //     temp.push(result[j].concat(input[i]));
+  //   }
+  //   // console.log('temp : ',temp);
+  //   result = result.concat(temp);
+  // }
+  input.forEach((inputEl) => {
     let temp = [];
-    for (let j = 0; j < result.length; j++) {
-      temp.push(result[j].concat(input[i]));
-    }
-    // console.log('temp : ',temp);
+    result.forEach((res) => {
+      temp.push(res.concat(inputEl));
+    });
     result = result.concat(temp);
-  }
+  });
+
   return result;
-}
+};
 
 console.log(combine(input));
 
@@ -123,13 +154,21 @@ console.log(combine(input));
 
 // solution :
 const changeKeyNames = (obj, renameObj) => {
-  for (const key of Object.keys(obj)) {
-    if (!renameObj[key]) continue;
-    obj[renameObj[key]] = obj[key];
-    delete obj[key];
-  }
+  // for (const key of Object.keys(obj)) {
+  //   if (!renameObj[key]) continue;
+  //   obj[renameObj[key]] = obj[key];
+  //   delete obj[key];
+  // }
+
+  Object.keys(obj).forEach((key) => {
+    if (renameObj[key]) {
+      obj[renameObj[key]] = obj[key];
+      delete obj[key];
+    }
+  });
+
   console.log(obj);
-  return obj
+  return obj;
 };
 
 changeKeyNames(
@@ -149,20 +188,20 @@ const nonUniqueElFilter = (arr) => {
     return acc;
   }, {});
 
-  const res = [];
+  // const res = [];
 
-  Object.entries(obj)
+  return Object.entries(obj)
     .filter((el) => {
       return el[1] === 1;
     })
-    .forEach((el) => {
-      res.push(+el[0]);
+    .map((el) => {
+      return +el[0];
     });
 
-  return res;
+  // return res;
 };
 
-console.log((nonUniqueElFilter([1, 2, 2, 3, 4, 4, 5])))
+console.log(nonUniqueElFilter([1, 2, 2, 3, 4, 4, 5]));
 
 //7.​ Write a program that will return true if the string is y/yes or false if the string is n/no. (​regex​)
 //Ex.
@@ -173,23 +212,21 @@ console.log((nonUniqueElFilter([1, 2, 2, 3, 4, 4, 5])))
 //false
 
 // solution
-const isAgree = (inputStr) =>{
+const isAgree = (inputStr) => {
+  const truthyRegX = /^(y|yes)$/i;
+  const falsyRegX = /^(n|no)$/i;
 
-    const truthyRegX = /^(y|yes)$/i;
-    const falsyRegX = /^(n|no)$/i;
+  if (truthyRegX.test(inputStr)) return true;
+  if (falsyRegX.test(inputStr)) return false;
 
-    if (truthyRegX.test(inputStr)) return true
-    if (falsyRegX.test(inputStr)) return false
+  return "Please provide valid input string...";
+};
 
-    return "Please provide valid input string..."
-
-}
-
-console.log(isAgree('y'));
-console.log(isAgree('yes'));
-console.log(isAgree('N'));
-console.log(isAgree('No'));
-console.log(isAgree('x'));
+console.log(isAgree("y"));
+console.log(isAgree("yes"));
+console.log(isAgree("N"));
+console.log(isAgree("No"));
+console.log(isAgree("x"));
 
 // 8. Write a program to get a sorted array of objects ordered by properties and
 // orders.
@@ -200,34 +237,48 @@ console.log(isAgree('x'));
 // ordered by = ​[​'name'​,​ ​'age'​]
 // orders = ​[​'asc'​,​ ​'desc'​]
 // Result :
-// [{"name":"barney","age":36},{"name":"fred","age":48},{"name":"fred","age":40}
+// [{"name":"barney","age":36},{"name":"fred","age":48},{"name":"fred","age":40}]
 
 // solution
-
 const sortObjs = (inputArr, orderByArr, ordersArr) => {
   return inputArr.sort((currObj, nextObj) => {
-    for (let i = 0; i < orderByArr.length; i++) {
-      const orderBy = orderByArr[i];
-      const order = ordersArr[i] === "asc" ? 1 : -1;
+    // for (let i = 0; i < orderByArr.length; i++) {
+    //   const orderBy = orderByArr[i];
+    //   const order = ordersArr[i] === "asc" ? 1 : -1;
 
+    //   if (currObj[orderBy] > nextObj[orderBy]) {
+    //     return 1 * order;
+    //   } else if (currObj[orderBy] < nextObj[orderBy]) {
+    //     return -1 * order;
+    //   }
+    // }
+
+    return orderByArr.reduce((result, orderBy, index) => {
+      if (result !== 0) {
+        return result;
+      }
+
+      const order = ordersArr[index] === "asc" ? 1 : -1;
       if (currObj[orderBy] > nextObj[orderBy]) {
         return 1 * order;
       } else if (currObj[orderBy] < nextObj[orderBy]) {
         return -1 * order;
       }
-    }
-    return 0;
+      return 0;
+    }, 0);
   });
 };
 
 console.log(
-  sortObjs([
-    { name: "fred", age: 48 },
-    { name: "barney", age: 36 },
-    { name: "fred", age: 40 }
-  ],
-  ["name", "age"],
-  ["asc", "desc"])
+  sortObjs(
+    [
+      { name: "fred", age: 48 },
+      { name: "barney", age: 36 },
+      { name: "fred", age: 40 }
+    ],
+    ["name", "age"],
+    ["asc", "desc"]
+  )
 );
 
 // 9.​ Write a program to remove the key-value pairs to the given keys.
@@ -239,11 +290,18 @@ console.log(
 // solution :
 
 const removeKey = (obj, keysToRemove) => {
-  for (const removeKey of keysToRemove) {
+  // for (const removeKey of keysToRemove) {
+  //   if (obj[removeKey]) {
+  //     delete obj[removeKey];
+  //   }
+  // }
+
+  keysToRemove.forEach((removeKey) => {
     if (obj[removeKey]) {
       delete obj[removeKey];
     }
-  }
+  });
+
   console.log(obj);
   return obj;
 };
@@ -261,7 +319,11 @@ removeKey({ a: 1, b: 2, c: 4 }, ["a", "b"]);
 // solution :
 
 const convertFormate = (time) => {
-    return time % 12 === 0 ? '12am' : time >= 12 ? time%12+'pm' : time%12+'am';
+  // return time % 12 === 0 ? '12am' : time >= 12 ? time%12+'pm' : time%12+'am';
+  if (time === 0 || time === 24) return "12am";
+  else if (time === 12) return "12pm";
+  else if (time >= 12 && time < 24) return (time % 12) + "pm";
+  else if (time > 0 && time < 12) return (time % 12) + "am";
 };
 
-console.log((convertFormate(15)))
+console.log(convertFormate(15));
