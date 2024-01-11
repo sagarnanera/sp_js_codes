@@ -13,6 +13,26 @@ A simple Todo app built with Node.js.
 git clone -b todo_app https://github.com/sagarnanera/sp_js_codes.git
 ```
 
+### Create Data Folder
+
+Create a data folder in the project root.
+
+```bash
+mkdir data
+```
+
+Inside the data folder, create a data.txt file.
+
+```bash
+touch data/data.txt
+```
+
+Create a .env file in the project root and include the absolute path to data.txt.
+
+```bash
+echo "DATA_FILE_PATH=$(pwd)/data/data.txt" > .env
+```
+
 ### Install Dependencies
 
 Navigate to the project directory and install the required dependencies.
@@ -30,7 +50,7 @@ Start the Todo app.
 yarn dev
 ```
 
-The app will be accessible at http://localhost:3000.
+The app will be accessible at http://localhost:8080.
 
 
 ## Usage
