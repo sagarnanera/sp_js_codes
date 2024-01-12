@@ -5,12 +5,23 @@ const {
   createTodo,
   updateTodo
 } = require("../services/todo.service");
-const { todoValidator, updateTodoValidator } = require("../validators/todo.validator");
+const {
+  todoValidator,
+  updateTodoValidator
+} = require("../validators/todo.validator");
 const router = express.Router();
 
 router.get("/todo", async (req, res) => {
+  const { isCompleted } = req.query;
+
   try {
-    const todos = await getTodo();
+    let todos = await getTodo();
+
+    if (isCompleted !== undefined) {
+      todos = todos.filter((todo) => {
+        return todo.isCompleted.toString() === isCompleted;
+      });
+    }
 
     return res.status(200).json({
       success: true,
@@ -51,14 +62,12 @@ router.get("/todo/:id", async (req, res) => {
 });
 
 router.post("/todo", async (req, res) => {
-
-
   const { error } = todoValidator.validate(req.body);
-    if (error) {
-        return res
-            .status(400)
-            .json({ success: false, message: error.details[0].message });
-    }
+  if (error) {
+    return res
+      .status(400)
+      .json({ success: false, message: error.details[0].message });
+  }
 
   const todoData = req.body;
   try {
@@ -76,14 +85,12 @@ router.post("/todo", async (req, res) => {
 });
 
 router.put("/todo/:id", async (req, res) => {
-
-
   const { error } = updateTodoValidator.validate(req.body);
-    if (error) {
-        return res
-            .status(400)
-            .json({ success: false, message: error.details[0].message });
-    }
+  if (error) {
+    return res
+      .status(400)
+      .json({ success: false, message: error.details[0].message });
+  }
 
   const id = req.params.id;
   const todoData = req.body;
@@ -114,7 +121,7 @@ router.delete("/todo", async (req, res) => {
   try {
     const isDeleted = await deleteTodo();
 
-    console.log("todo==");
+    // console.log("todo==");
 
     if (!isDeleted) {
       return res.status(404).json({
@@ -138,7 +145,7 @@ router.delete("/todo/:id", async (req, res) => {
   const id = req.params.id;
   try {
     const isDeleted = await deleteTodo(id);
-    console.log("in deleted with id",id);
+    // console.log("in deleted with id", id);
 
     if (!isDeleted) {
       return res.status(404).json({

@@ -8,7 +8,7 @@ const todoValidator = joi.object({
 const updateTodoValidator = joi.object({
   name: joi.string(),
   description: joi.string(),
-  isCompeted:joi.boolean()
+  isCompleted:joi.bool().strict()
 });
 
 module.exports = {

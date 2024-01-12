@@ -1,4 +1,5 @@
 # sp_js_codes
+
 SocialPilot JavaScript practice code snippets
 
 # Todo App
@@ -52,12 +53,11 @@ yarn dev
 
 The app will be accessible at http://localhost:8080.
 
-
 ## Usage
 
 ### API Endpoints
 
-GET /todo: Get all todos.
+GET /todo: Get all todos. (query : {isCompleted:true/false})
 GET /todo/:id: Get a specific todo.
 POST /todo: Create a new todo.
 PUT /todo/:id: Update a todo.
