@@ -57,9 +57,14 @@ The app will be accessible at http://localhost:8080.
 
 ### API Endpoints
 
-GET /todo: Get all todos. (query : {isCompleted:true/false})
-GET /todo/:id: Get a specific todo.
-POST /todo: Create a new todo.
-PUT /todo/:id: Update a todo.
-DELETE /todo: Delete all todos.
-DELETE /todo/:id: Delete a todo.
+* GET /todo: Get all todos (query : {isCompleted:true/false})
+
+* GET /todo/:id: Get a specific todo
+
+* POST /todo: Create a new todo
+
+* PUT /todo/:id: Update a todo
+
+* DELETE /todo: Delete all todos
+
+* DELETE /todo/:id: Delete a todo
