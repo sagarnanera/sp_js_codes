@@ -2,6 +2,6 @@
 
 SocialPilot JavaScript practice code snippets
 
-# Tambola game
+# NodeJS practice
 
-Tambola is A GAME TO TURN YOUR FRIDAY TO FAME - built with js.
+code snippets for nodeJS modules like fs, os, cluster etc....
