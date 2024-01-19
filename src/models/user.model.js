@@ -1,6 +1,7 @@
 const { ObjectId } = require("mongodb");
 const { getDBInstance } = require("../DB/db");
-const { hashPassword } = require("../services/passwordService");
+const { customError } = require("../handlers/error.handler");
+// const { hashPassword } = require("../services/passwordService");
 
 class User {
   name;
@@ -45,8 +46,8 @@ class User {
     });
 
     if (isExist) {
-      console.log("user is not unique", isExist);
-      throw new Error("User with this email already exist...");
+      // console.log("user is not unique", isExist);
+      throw new customError("User with this email already exist...", 400);
     }
 
     console.log(this);
@@ -78,8 +79,10 @@ class User {
     const updatedUser = await this.#collection.findOneAndUpdate(
       { _id: new ObjectId(userId) },
       { $set: updateData },
-      { returnOriginal: false }
+      { returnOriginal: false, projection: { password: 0 } }
     );
+
+    return updatedUser;
   }
 
   async deleteUser(userId) {

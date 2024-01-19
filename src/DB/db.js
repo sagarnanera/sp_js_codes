@@ -17,9 +17,9 @@ const connectDB = async () => {
     console.log(
       "connected to db --> ",
       "mongodb://" +
-        client.options.hosts[0].toString() +
-        "/" +
-        client.options.dbName
+      client.options.hosts[0].toString() +
+      "/" +
+      client.options.dbName
     );
 
     // return _db;

@@ -1,5 +1,10 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
+
+// error instances
+const { customError, notFoundHandler } = require("./handlers/error.handler");
+const { BSONError, BSONRuntimeError } = require("bson");
+
 // require("dotenv").config();
 const app = express();
 
@@ -12,16 +17,11 @@ app.use(cookieParser());
 // const { getDBInstance, connectDB } = require("./DB/db");
 // connectDB();
 
-const { PRIORITY, STATUS } = require("./utils/constants");
-
-// models
-const Todo = require("./models/todo.model");
-const User = require("./models/user.model");
-
 // routes
 const authRoute = require("./routes/auth.route");
 const userRoute = require("./routes/user.route");
 const todoRoute = require("./routes/todo.route");
+const { MongoError } = require("mongodb");
 
 // app.get("/todo", async (req, res) => {
 //   const todo = new Todo({
@@ -65,17 +65,26 @@ app.use("/api/auth", authRoute);
 app.use("/api/user", userRoute);
 app.use("/api/todo", todoRoute);
 
-app.get("*", (req, res) => {
-  return res
-    .status(404)
-    .json({ success: false, message: "Not found, Check the URL properly !!!" });
-});
+app.use(notFoundHandler);
 
 app.use((err, req, res, next) => {
-  console.log(err);
+  console.log("here in error : ", err);
   if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
     return res.status(400).json({ message: "Invalid JSON payload" });
   }
+
+  if (err instanceof customError) {
+    return res.status(err.statusCode).json({ success: false, message: err.message });
+  }
+
+  if (err instanceof BSONError) {
+    return res.status(400).json({ success: false, message: err.message });
+  }
+
+  console.log('err : ', err instanceof BSONError);
+  console.log('err : ', err instanceof MongoError);
+  console.log('err : ', err instanceof BSONRuntimeError);
+
 
   return res
     .status(500)

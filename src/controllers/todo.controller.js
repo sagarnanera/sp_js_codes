@@ -5,13 +5,17 @@ const {
 } = require("../validators/todo.validator");
 
 exports.getTODOs = async (req, res) => {
+
+  // for filters
+  // const {skip,limit,}
+
   try {
-    const todos = await new Todo().getTODOs(req.user._id);
+    const todos = await new Todo().getTODOs(req.user._id,);
 
     res.status(200).json({ success: true, todos });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Internal Server Error." });
+    res.status(500).json({ success: false, message: "Internal Server Error." });
   }
 };
 
@@ -28,25 +32,11 @@ exports.getTODO = async (req, res) => {
     res.status(200).json({ success: true, todo });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Internal Server Error." });
+    res.status(500).json({ success: false, message: "Internal Server Error." });
   }
 };
 
 exports.addTODO = async (req, res) => {
-  // try {
-  //   const todoId = req.params._todoId;
-
-  //   const todo = await new Todo().getTodoById(todoId);
-
-  //   if (todo) {
-  //     res.status(404).json({ success: false, message: "TODO not found." });
-  //   }
-
-  //   res.status(200).json({ success: true, todo });
-  // } catch (error) {
-  //   console.log(error);
-  //   res.status(500).json({ message: "Internal Server Error." });
-  // }
 
   const { error } = todoValidator.validate(req.body);
 
@@ -83,7 +73,7 @@ exports.updateTODO = async (req, res) => {
   const todoId = req.params._todoId;
   const todoData = req.body;
   try {
-    const updatedTodo = await new Todo().updateTodo(id, todoData);
+    const updatedTodo = await new Todo().updateTodo(todoId, todoData);
 
     if (!updatedTodo) {
       return res.status(404).json({

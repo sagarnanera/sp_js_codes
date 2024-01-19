@@ -46,7 +46,7 @@ const updateTodoValidator = joi.object({
     .messages({
       "valid.base": "priority should be one of High, low, medium."
     }),
-  dueOn: joi.date().max("now").messages({
+  dueOn: joi.date().min("now").messages({
     "date.base": "End date should be a valid date"
   }),
   tags: joi.array().items(joi.string().min(2).max(10))

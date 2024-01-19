@@ -6,13 +6,14 @@ const {
   UpdateUser
 } = require("../controllers/user.controller");
 const authenticate = require("../middlewares/auth.middleware");
+const tryCatchHandler = require("../handlers/globalTryCatch.handler");
 const router = express.Router();
 
 router
   .route("/")
-  .get(authenticate, GetUser)
-  .put(authenticate, UpdateUser)
-  .delete(authenticate, DeleteUser);
-// router.route("/update-password").post(authenticate, ResetPass);
+  .get(authenticate, tryCatchHandler(GetUser))
+  .put(authenticate, tryCatchHandler(UpdateUser))
+  .delete(authenticate, tryCatchHandler(DeleteUser));
+// router.route("/update-password").post(authenticate, tryCatchHandler(ResetPass));
 
 module.exports = router;

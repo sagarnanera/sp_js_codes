@@ -1,5 +1,6 @@
 const { ObjectId } = require("mongodb");
 const { getDBInstance } = require("../DB/db");
+const { customError } = require("../handlers/error.handler");
 
 class Todo {
   userId;
@@ -21,7 +22,7 @@ class Todo {
       status: "",
       dueOn: "",
       tags: [],
-      priority: ""
+      priority: "",
     }
   ) {
     if (arguments.length === 0) {
@@ -54,7 +55,7 @@ class Todo {
       dueOn: this.dueOn,
       createdOn: this.createdOn,
       tags: this.tags,
-      priority: this.priority
+      priority: this.priority,
     };
 
     // console.log(this);
@@ -64,19 +65,35 @@ class Todo {
   }
 
   async getTODOs(userId) {
-    const todoList = await this.#collection.find({}).toArray();
+    const todoList = await this.#collection
+      .find({ userId: new ObjectId(userId) })
+      .toArray();
     return todoList;
   }
 
   async getTodoById(todoId) {
+    // if (!ObjectId.isValid(todoId)) {
+    //   throw new customError("Invalid id...", 400)
+    // }
+    // try {
     const todo = await this.#collection.findOne({ _id: new ObjectId(todoId) });
     return todo;
+    // } catch (error) {
+    // console.log('err : ', error);
+    // }
   }
 
   async updateTodo(todoId, updateData) {
-    const res = await this.#collection.updateOne(
+    if (updateData.dueOn) {
+      console.log("update todo", updateData);
+
+      updateData.dueOn = new Date(updateData.dueOn).toUTCString();
+    }
+
+    const res = await this.#collection.findOneAndUpdate(
       { _id: new ObjectId(todoId) },
-      { $set: updateData }
+      { $set: updateData },
+      { returnOriginal: false }
     );
 
     console.log(res);
@@ -85,15 +102,17 @@ class Todo {
   }
 
   async deleteTodo(todoId) {
-    const todo = await this.getTodoById(todoId);
+    // const todo = await this.getTodoById(todoId);
 
-    if (!todo) {
-      return false;
-    }
+    // if (!todo) {
+    //   return false;
+    // }
 
-    await this.#collection.deleteOne({ _id: new ObjectId(todoId) });
+    const res = await this.#collection.findOneAndDelete({
+      _id: new ObjectId(todoId),
+    });
 
-    return true;
+    return res;
   }
 }
 

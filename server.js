@@ -1,7 +1,7 @@
 require("dotenv").config();
 // const {db}  = require("./src/DB/db");
 const { connectDB } = require("./src/DB/db");
-connectDB();
+// connectDB();
 const app = require("./src/app");
 const PORT = process.env.PORT || 8080;
 
@@ -15,11 +15,17 @@ const PORT = process.env.PORT || 8080;
 //   });
 // });
 
-app.listen(PORT, (err) => {
-  // TODO : json schema validation for collections
+connectDB()
+  .then(() =>
+    app.listen(PORT, (err) => {
+      // TODO : json schema validation for collections
 
-  if (err) {
-    return console.log({ msg: "Error starting server", err });
-  }
-  console.log(`Server is up and running on : http://localhost:${PORT}/`);
-});
+      if (err) {
+        return console.log({ msg: "Error starting server", err });
+      }
+      console.log(`Server is up and running on : http://localhost:${PORT}/`);
+    })
+  )
+  .catch((err) =>
+    console.log("Error connecting db.... Restart the server.....\n", err)
+  );

@@ -7,6 +7,7 @@ const {
   updateTODO,
   deleteTODO
 } = require("../controllers/todo.controller");
+const tryCatchHandler = require("../handlers/globalTryCatch.handler");
 
 // const {
 //   deleteTodo,
@@ -20,11 +21,11 @@ const {
 // } = require("../validators/todo.validator");
 const router = express.Router();
 
-router.get("/", authenticate, getTODOs);
-router.get("/:_todoId", authenticate, getTODO);
-router.post("/", authenticate, addTODO);
-router.put("/:_todoId", authenticate, updateTODO);
-router.delete("/:_todoId", authenticate, deleteTODO);
+router.get("/", authenticate, tryCatchHandler(getTODOs));
+router.get("/:_todoId", authenticate, tryCatchHandler(getTODO));
+router.post("/", authenticate, tryCatchHandler(addTODO));
+router.put("/:_todoId", authenticate, tryCatchHandler(updateTODO));
+router.delete("/:_todoId", authenticate, tryCatchHandler(deleteTODO));
 
 // router.get("/todo", async (req, res) => {
 //   const { isCompleted } = req.query;
