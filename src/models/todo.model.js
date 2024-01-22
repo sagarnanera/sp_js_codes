@@ -1,6 +1,5 @@
-const { ObjectId } = require("mongodb");
 const { getDBInstance } = require("../DB/db");
-const { customError } = require("../handlers/error.handler");
+const convertToObjectId = require("../utils/objectIdConverter");
 
 class Todo {
   userId;
@@ -11,7 +10,6 @@ class Todo {
   createdOn;
   tags = [];
   priority;
-  // static #collection = getDBInstance().collection("todos") ;
   #collection;
 
   constructor(
@@ -22,7 +20,7 @@ class Todo {
       status: "",
       dueOn: "",
       tags: [],
-      priority: "",
+      priority: ""
     }
   ) {
     if (arguments.length === 0) {
@@ -34,17 +32,12 @@ class Todo {
     this.title = title;
     this.description = description;
     this.status = status;
-    this.dueOn = new Date(dueOn).toUTCString();
-    this.createdOn = new Date().toUTCString();
+    this.dueOn = new Date(dueOn);
+    this.createdOn = new Date();
     this.tags = tags;
     this.priority = priority;
     this.#collection = getDBInstance().collection("todos");
   }
-
-  // _getCollection = () => {
-  //   const db = dbClient.getDBInstance();
-  //   return db.collection('todos');
-  // };
 
   async save() {
     const todoData = {
@@ -55,45 +48,46 @@ class Todo {
       dueOn: this.dueOn,
       createdOn: this.createdOn,
       tags: this.tags,
-      priority: this.priority,
+      priority: this.priority
     };
-
-    // console.log(this);
 
     const result = await this.#collection.insertOne(todoData);
     return result.insertedId;
   }
 
-  async getTODOs(userId) {
+  async getTODOs(filter, skip, limit, sortFilter) {
     const todoList = await this.#collection
-      .find({ userId: new ObjectId(userId) })
+      .find(filter)
+      .project({ title, createdOn, dueOn, description, status })
+      .skip(skip)
+      .limit(limit)
+      .sort(sortFilter)
       .toArray();
+
+    console.log("todo after filters : ", todoList);
+
     return todoList;
   }
 
-  async getTodoById(todoId) {
-    // if (!ObjectId.isValid(todoId)) {
-    //   throw new customError("Invalid id...", 400)
-    // }
-    // try {
-    const todo = await this.#collection.findOne({ _id: new ObjectId(todoId) });
+  async getTodo(todoId, userId) {
+    const todo = await this.#collection.findOne({
+      _id: convertToObjectId(todoId),
+      userId: convertToObjectId(userId)
+    });
     return todo;
-    // } catch (error) {
-    // console.log('err : ', error);
-    // }
   }
 
   async updateTodo(todoId, updateData) {
     if (updateData.dueOn) {
       console.log("update todo", updateData);
 
-      updateData.dueOn = new Date(updateData.dueOn).toUTCString();
+      updateData.dueOn = new Date(updateData.dueOn);
     }
 
     const res = await this.#collection.findOneAndUpdate(
-      { _id: new ObjectId(todoId) },
+      { _id: convertToObjectId(todoId) },
       { $set: updateData },
-      { returnOriginal: false }
+      { returnDocument: "after" }
     );
 
     console.log(res);
@@ -101,15 +95,10 @@ class Todo {
     return res;
   }
 
-  async deleteTodo(todoId) {
-    // const todo = await this.getTodoById(todoId);
-
-    // if (!todo) {
-    //   return false;
-    // }
-
+  async deleteTodo(todoId, userId) {
     const res = await this.#collection.findOneAndDelete({
-      _id: new ObjectId(todoId),
+      _id: convertToObjectId(todoId),
+      userId: convertToObjectId(userId)
     });
 
     return res;

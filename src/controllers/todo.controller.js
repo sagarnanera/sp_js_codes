@@ -1,120 +1,159 @@
 const Todo = require("../models/todo.model");
-const {
-  todoValidator,
-  updateTodoValidator
-} = require("../validators/todo.validator");
+const { PRIORITY, STATUS } = require("../utils/constants");
 
 exports.getTODOs = async (req, res) => {
+  const {
+    title,
+    skip = 0,
+    limit = 10,
+    sortBy,
+    sortOrder,
+    priority,
+    status,
+    dueOn,
+    dueRange = " ",
+    tags = " "
+  } = req.query;
 
-  // for filters
-  // const {skip,limit,}
+  console.log("query : ", req.query);
 
-  try {
-    const todos = await new Todo().getTODOs(req.user._id,);
+  const filter = { userId: req.user._id };
 
-    res.status(200).json({ success: true, todos });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ success: false, message: "Internal Server Error." });
+  // field filters
+  if (title) {
+    filter.title = { $regex: title, $options: "i" };
   }
+
+  if (priority && Object.values(PRIORITY).includes(priority.toLowerCase())) {
+    filter.priority = priority.toLowerCase();
+  }
+
+  if (status && Object.values(STATUS).includes(status.toLowerCase())) {
+    filter.status = status.toLowerCase();
+  }
+
+  console.log("tag : ", tags);
+
+  const tagList = tags.split(",").filter((tag) => tag.trim() !== "");
+
+  if (tagList.length > 0) {
+    console.log("here", tagList);
+    filter.tags = { $in: tagList };
+  }
+
+  // date filters
+  if (dueOn) {
+    let dueDateFilter = {};
+    let dueDate = new Date(dueOn);
+    dueDateFilter.$gt = dueDate;
+    dueDateFilter.$lt = new Date(
+      dueDate.getFullYear(),
+      dueDate.getMonth(),
+      dueDate.getDate() + 1
+    );
+
+    console.log(
+      dueDate,
+      new Date(dueDate.getFullYear(), dueDate.getMonth(), dueDate.getDate() + 1)
+    );
+
+    filter.dueOn = dueDateFilter;
+  }
+
+  const due = dueRange?.split(",").filter((due) => due.trim() !== "");
+
+  if (due.length > 0 && !filter.dueOn) {
+    let dueFilter = {};
+    const dueStart = new Date(due[0]);
+    const dueEnd = new Date(due[1]);
+    if (dueStart) {
+      dueFilter.$gt = dueStart;
+    }
+    if (dueEnd) {
+      dueFilter.$lt = dueEnd;
+    }
+
+    filter.dueOn = dueFilter;
+  }
+
+  // sort filters
+  let sortFilter = {};
+  if (sortBy && ["title", "dueOn", "priority", "status"].includes(sortBy)) {
+    sortFilter[sortBy] = sortOrder === "desc" ? -1 : 1;
+  } else {
+    sortFilter["priority"] = -1;
+  }
+
+  console.log("filter : ", filter);
+  console.log("sortFilter : ", sortFilter);
+
+  const todoList = await new Todo().getTODOs(
+    filter,
+    parseInt(skip),
+    parseInt(limit),
+    sortFilter
+  );
+
+  res
+    .status(200)
+    .json({ success: true, totalDocuments: todoList.length, todoList });
 };
 
 exports.getTODO = async (req, res) => {
-  try {
-    const todoId = req.params._todoId;
+  const todoId = req.params._todoId;
 
-    const todo = await new Todo().getTodoById(todoId);
+  const todo = await new Todo().getTodoById(todoId);
 
-    if (!todo) {
-      res.status(404).json({ success: false, message: "TODO not found." });
-    }
-
-    res.status(200).json({ success: true, todo });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ success: false, message: "Internal Server Error." });
+  if (!todo) {
+    res.status(404).json({ success: false, message: "TODO not found." });
   }
+
+  res.status(200).json({ success: true, todo });
 };
 
 exports.addTODO = async (req, res) => {
-
-  const { error } = todoValidator.validate(req.body);
-
-  if (error) {
-    return res
-      .status(400)
-      .json({ success: false, message: error.details[0].message });
-  }
-
   const todoData = req.body;
 
-  try {
-    const todo = await new Todo({ userId: req.user._id, ...todoData }).save();
+  const todo = await new Todo({ userId: req.user._id, ...todoData }).save();
 
-    return res
-      .status(200)
-      .json({ success: true, message: "Created TODO successfully...", todo });
-  } catch (error) {
-    console.log(error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Error creating TODO..." });
-  }
+  return res
+    .status(200)
+    .json({ success: true, message: "Created TODO successfully...", todo });
 };
 
 exports.updateTODO = async (req, res) => {
-  const { error } = updateTodoValidator.validate(req.body);
-  if (error) {
-    return res
-      .status(400)
-      .json({ success: false, message: error.details[0].message });
-  }
-
   const todoId = req.params._todoId;
   const todoData = req.body;
-  try {
-    const updatedTodo = await new Todo().updateTodo(todoId, todoData);
 
-    if (!updatedTodo) {
-      return res.status(404).json({
-        success: false,
-        message: "TODO data not found..."
-      });
-    }
+  const updatedTodo = await new Todo().updateTodo(todoId, todoData);
 
-    return res.status(200).json({
-      success: true,
-      message: "Updated TODO successfully...",
-      updatedTodo
+  if (!updatedTodo) {
+    return res.status(404).json({
+      success: false,
+      message: "TODO data not found..."
     });
-  } catch (error) {
-    console.log(error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Error Updating TODO..." });
   }
+
+  return res.status(200).json({
+    success: true,
+    message: "Updated TODO successfully...",
+    updatedTodo
+  });
 };
 
 exports.deleteTODO = async (req, res) => {
   const todoId = req.params._todoId;
 
-  try {
-    const isDeleted = await new Todo().deleteTodo(todoId);
+  const isDeleted = await new Todo().deleteTodo(todoId);
 
-    if (!isDeleted) {
-      return res.status(404).json({
-        success: false,
-        message: "TODO data not found..."
-      });
-    }
-
-    return res
-      .status(200)
-      .json({ success: true, message: "Deleted TODO successfully..." });
-  } catch (error) {
-    console.log(error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Error deleting TODO..." });
+  if (isDeleted.deletedCount !== 1) {
+    return res.status(404).json({
+      success: false,
+      message: "TODO data not found..."
+    });
   }
+
+  return res
+    .status(200)
+    .json({ success: true, message: "Deleted TODO successfully..." });
 };

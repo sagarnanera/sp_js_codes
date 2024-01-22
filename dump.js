@@ -1,3 +1,56 @@
+
+// TODO:
+
+add validate middleware
+clean code
+reset password functionality
+
+
+test everything
+
+projection in get todos
+
+
+
+
+// bcrypt.hash("123456", bcrypt.genSaltSync(10), (err, hash) => {
+//   console.log(hash);
+// });
+
+// bcrypt.compare(
+//   "123456",
+//   "$2a$10$kTwZZBMLtQo.cDC44C378ew0v5wljidiGhCNVKXj52V0vnS7WPOzq",
+//   (err, isMatch) => {
+//     console.log(isMatch);
+//   }
+// );
+
+
+// dump.
+// db.then((dbClient) => console.log(dbClient.listCollections().toArray())).catch((err) =>
+//   console.error(err)
+// );
+// const t = new Todo();
+
+// const db = getDBInstance();
+// const todo = await db.collection("todos");
+// const todo = t.getCollection();
+
+// const result = await todo.insertOne({
+//   title: "test todo",
+//   description: "this is test todo.....",
+//   tag: ["office"],
+//   orders: 1,
+//   createdOn: Date.now(),
+//   dueOn: Date.now() + 3600,
+//   status: "completed"
+// });
+
+// console.log(result, 5);
+
+// todo.save();
+
+
 // const { getDBInstance } = require("../DB/db");
 
 // class Todo {

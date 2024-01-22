@@ -1,7 +1,6 @@
-const { ObjectId } = require("mongodb");
 const { getDBInstance } = require("../DB/db");
 const { customError } = require("../handlers/error.handler");
-// const { hashPassword } = require("../services/passwordService");
+const convertToObjectId = require("../utils/objectIdConverter");
 
 class User {
   name;
@@ -27,7 +26,7 @@ class User {
     this.name = name;
     this.email = email;
     this.password = password;
-    this.createdOn = new Date().toUTCString();
+    this.createdOn = new Date();
     this.organization = organization;
     this.#collection = getDBInstance().collection("users");
   }
@@ -46,23 +45,19 @@ class User {
     });
 
     if (isExist) {
-      // console.log("user is not unique", isExist);
       throw new customError("User with this email already exist...", 400);
     }
 
-    console.log(this);
-
-    // user.password = await hashPassword(this.password);
-
     const result = await this.#collection.insertOne(user);
+
     return result.insertedId;
   }
 
   async getUserById(userId) {
     const user = await this.#collection.findOne(
-      { _id: new ObjectId(userId) },
+      { _id: convertToObjectId(userId) },
       { projection: { password: 0 } }
-    );
+    ); // have to use projection as parameter in findOne, but in find it can be used as method.
     return user;
   }
 
@@ -71,27 +66,61 @@ class User {
     return user;
   }
 
-  async updateUser(userId, updateData) {
-    // if (updateData.password) {
-    //   updateData.password = await hashPassword(updateData.password);
-    // }
+  async updateUser(userId, updateData, currentEmail) {
+    console.log("updateData:", updateData);
+
+    if (currentEmail && updateData.email && currentEmail !== updateData.email) {
+      console.log("here in if");
+
+      const isExist = await this.#collection.findOne({
+        email: updateData.email
+      });
+
+      if (isExist) {
+        throw new customError("User with this email already exist...", 400);
+      }
+    }
+
+    const selectiveUpdate = {};
+
+    if (updateData.name !== undefined) {
+      selectiveUpdate.name = updateData.name;
+    }
+
+    if (updateData.email !== undefined) {
+      selectiveUpdate.email = updateData.email;
+    }
+
+    if (updateData.password !== undefined) {
+      selectiveUpdate.password = updateData.password;
+    }
+
+    if (updateData.organization !== undefined) {
+      selectiveUpdate.organization = updateData.organization;
+    }
 
     const updatedUser = await this.#collection.findOneAndUpdate(
-      { _id: new ObjectId(userId) },
-      { $set: updateData },
-      { returnOriginal: false, projection: { password: 0 } }
+      { _id: convertToObjectId(userId) },
+      { $set: selectiveUpdate },
+      { returnDocument: "after", projection: { password: 0 } }
     );
+
+    console.log("updated user : ", updatedUser);
 
     return updatedUser;
   }
 
   async deleteUser(userId) {
-    const res = await this.#collection.deleteOne({ _id: new ObjectId(userId) });
-    console.log(res);
+    const res = await this.#collection.deleteOne({
+      _id: convertToObjectId(userId)
+    });
+    return res;
   }
 
   async resetPassword(userId, updatedPass) {
-    const user = await this.#collection.findOne({ _id: new ObjectId(userId) });
+    const user = await this.#collection.findOne({
+      _id: convertToObjectId(userId)
+    });
 
     user.password = updatedPass;
 

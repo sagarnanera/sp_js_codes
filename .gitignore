@@ -9,6 +9,8 @@ node_modules
 # testing
 /coverage
 
+/dump.js
+
 # production
 build
 

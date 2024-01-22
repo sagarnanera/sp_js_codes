@@ -13,15 +13,3 @@ exports.compareHash = async (password, hash) => {
 
   return isMatch;
 };
-
-// bcrypt.hash("123456", bcrypt.genSaltSync(10), (err, hash) => {
-//   console.log(hash);
-// });
-
-// bcrypt.compare(
-//   "123456",
-//   "$2a$10$kTwZZBMLtQo.cDC44C378ew0v5wljidiGhCNVKXj52V0vnS7WPOzq",
-//   (err, isMatch) => {
-//     console.log(isMatch);
-//   }
-// );

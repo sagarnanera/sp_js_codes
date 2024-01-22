@@ -12,27 +12,11 @@ const registerValidator = joi.object({
   organization: joi.string()
 });
 
-// const resetPassValidator = joi.object({
-//   token: joi.string().length(64).required(),
-//   password: joi.string().min(6).required()
-// });
-
 const passwordValidator = joi.object({
   password: joi.string().min(6).required()
 });
 
-// const emailValidator = joi.object({ email: joi.string().email().required() });
-
-// const tokenValidator = joi.object({
-//   token: joi.string().length(64).required()
-// });
-
-// const contactUsValidator = joi.object({
-//   name: joi.string().max(20),
-//   email: joi.string().email().required(),
-//   message: joi.string().max(1500).required(),
-//   captchaToken: joi.string().required()
-// });
+const emailValidator = joi.object({ email: joi.string().email().required() });
 
 module.exports = {
   loginValidator,

@@ -1,11 +1,7 @@
 const User = require("../models/user.model");
 const { genJWTToken } = require("../services/jwtService");
-const {
-  registerValidator,
-  loginValidator,
-} = require("../validators/auth.validator");
 const { hashPassword, compareHash } = require("../services/passwordService");
-const customError = require("../handlers/error.handler");
+const crypto = require("crypto");
 
 const CookieOptions = {
   expires: new Date(
@@ -14,42 +10,28 @@ const CookieOptions = {
   // secure: true,
   secure: false,
   httpOnly: true,
-  sameSite: "none",
+  sameSite: "none"
 };
 
 exports.Login = async (req, res) => {
-  // try {
-  const { error } = loginValidator.validate(req.body);
-
-  if (error) {
-    throw new customError(error.details[0].message, 400);
-    // return res
-    //   .status(400)
-    //   .json({ success: false, message: error.details[0].message });
-  }
-
   const { email, password } = req.body;
 
-  // const user = await User.findOne({ email });
   const user = await new User().getUser({ email: email });
 
   if (!user) {
-
-    throw new customError("User does not exist.", 404)
-    // return res
-    //   .status(404)
-    //   .json({ success: false, message: "User does not exist." });
+    res.status(404).json({ success: false, message: "User not found." });
   }
 
   const isMatch = await compareHash(password, user.password);
 
   if (!isMatch) {
-    throw new customError("Invalid Credentials !!!", 400);
+    res
+      .status(400)
+      .json({ success: false, message: "Invalid Credentials !!!" });
   }
 
-  // if (isMatch) {
   const payload = {
-    _id: user._id,
+    _id: user._id
   };
 
   // Sign token
@@ -60,86 +42,100 @@ exports.Login = async (req, res) => {
   return res.status(200).cookie("token", token, CookieOptions).json({
     success: true,
     message: "logged in successfully",
-    user: userData,
+    user: userData
   });
-  // } else {
-  //   return res
-  //     .status(400)
-  //     .json({ success: false, message:  });
-  // }
-  // } catch (error) {
-  //   console.log(error);
-  //   res.status(500).json({ success: false, message: "Internal server error" });
-  // }
 };
 
 exports.Register = async (req, res) => {
-  // try {
-  const { error } = registerValidator.validate(req.body);
-
-  if (error) {
-    return res
-      .status(400)
-      .json({ success: false, message: error.details[0].message });
-  }
-
   const { email, password: userPass, name, organization } = req.body;
 
-  // const user = await User.findOne({ email: email });
-  // const user = await new User().getUser({ email: email });
-
-  // if (user) {
-  //   return res
-  //     .status(400)
-  //     .json({ success: false, message: "Email already exists" });
-  // } else {
   const hash = await hashPassword(userPass);
 
   const user = new User({
     email: email,
     password: hash,
     name,
-    organization,
+    organization
   });
 
   const _id = await user.save();
 
   const payload = {
-    _id,
+    _id
   };
 
-  // Sign token
   const token = genJWTToken(payload);
 
-  // Update the lastLoggedInTime field
-  // newUser.lastLoginIp = req.ipAddress;
-  // newUser.lastLoggedInTime = Date.now();
-  // await user.save();
-
   const { password, ...userData } = user;
+
   res
     .status(200)
     .cookie("token", token, CookieOptions)
     .json({
       success: true,
       message: "Registered in successfully !!!",
-      user: { _id, ...userData },
+      user: { _id, ...userData }
     });
-  // } catch (error) {
-  //   console.log(error);
-  //   res.status(500).json({ success: false, message: "Internal server error" });
-  // }
 };
 
 exports.LogOut = async (req, res) => {
-  // try {
-  // console.log("here in logout");
   res.clearCookie("token");
+  res.status(200).send({ success: "true", message: "Successfully Logged Out" });
+};
+
+// forgot pass
+exports.ForgotPass = async (req, res) => {
+  const { email } = req.body;
+
+  const user = await new User().getUser({ email });
+
+  if (!user) {
+    throw new customError("User with this email does not exist.", 404);
+  }
+
+  const token = crypto.randomUUID();
+
+  const resetPasswordToken = token;
+  const resetPasswordExpires = Date.now() + 3600000;
+
+  await new User().updateUser(user._id, {
+    resetPasswordExpires,
+    resetPasswordToken
+  });
+
+  const resetPassLink = `http://localhost:8080/api/support/reset-password/${token}`;
+
+  // console.log("reset pass token..", token);
+
+  res.status(200).json({
+    success: true,
+    message: "Successfully generated reset password link.",
+    resetPassLink
+  });
+};
+
+exports.ResetPass = async (req, res) => {
+  const { token } = req.param;
+  const { password } = req.body;
+
+  const user = await new User().getUser({
+    resetPasswordToken: token,
+    resetPasswordExpires: { $gt: new Date.now() }
+  });
+
+  if (!user) {
+    return res.status(404).json({ success: false, message: "User not found." });
+  }
+
+  const newHash = await hashPassword(password);
+
+  await new User().updateUser(user._id, {
+    password: newHash,
+    resetPasswordExpires: null,
+    resetPasswordToken: null
+  });
+
   res
     .status(200)
-    .send({ success: "true", message: "Successfully Logged Out" });
-  // } catch (error) {
-  //   console.log(error);
-  //   res.status(500).json({ success: false, message: "Internal Server Error." });
-  // }
+    .json({ success: true, message: "Password reset successful." });
 };
