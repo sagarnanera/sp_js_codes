@@ -1,9 +1,7 @@
-// usage : to sign the JWT tokens
 const jwt = require("jsonwebtoken");
 
 const JWT_SEC = process.env.JWT_SECRET;
 const JWT_EXP = process.env.JWT_EXPIRE;
-// const JWT_EXP_VERIFICATION_EMAIL = process.env.JWT_EXP_VERIFICATION_EMAIL;
 
 const genJWTToken = (payload) => {
   try {
@@ -13,8 +11,7 @@ const genJWTToken = (payload) => {
 
     return token;
   } catch (error) {
-    console.log(error);
-    throw new Error("Error generating JWT token");
+    throw error;
   }
 };
 

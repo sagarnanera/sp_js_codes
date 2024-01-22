@@ -15,13 +15,11 @@ exports.getTODOs = async (req, res) => {
     tags = " "
   } = req.query;
 
-  console.log("query : ", req.query);
-
   const filter = { userId: req.user._id };
 
   // field filters
   if (title) {
-    filter.title = { $regex: title, $options: "i" };
+    filter.title = { $regex: new RegExp(title, "i") };
   }
 
   if (priority && Object.values(PRIORITY).includes(priority.toLowerCase())) {
@@ -32,12 +30,9 @@ exports.getTODOs = async (req, res) => {
     filter.status = status.toLowerCase();
   }
 
-  console.log("tag : ", tags);
-
-  const tagList = tags.split(",").filter((tag) => tag.trim() !== "");
+  const tagList = tags.split(":").filter((tag) => tag.trim() !== "");
 
   if (tagList.length > 0) {
-    console.log("here", tagList);
     filter.tags = { $in: tagList };
   }
 
@@ -52,24 +47,20 @@ exports.getTODOs = async (req, res) => {
       dueDate.getDate() + 1
     );
 
-    console.log(
-      dueDate,
-      new Date(dueDate.getFullYear(), dueDate.getMonth(), dueDate.getDate() + 1)
-    );
-
     filter.dueOn = dueDateFilter;
   }
 
-  const due = dueRange?.split(",").filter((due) => due.trim() !== "");
+  const due = dueRange?.split(":").filter((due) => due.trim() !== "");
 
   if (due.length > 0 && !filter.dueOn) {
     let dueFilter = {};
     const dueStart = new Date(due[0]);
     const dueEnd = new Date(due[1]);
-    if (dueStart) {
+
+    if (dueStart && !isNaN(dueStart.getTime())) {
       dueFilter.$gt = dueStart;
     }
-    if (dueEnd) {
+    if (dueEnd && !isNaN(dueEnd.getTime())) {
       dueFilter.$lt = dueEnd;
     }
 
@@ -78,10 +69,10 @@ exports.getTODOs = async (req, res) => {
 
   // sort filters
   let sortFilter = {};
-  if (sortBy && ["title", "dueOn", "priority", "status"].includes(sortBy)) {
+  if (sortBy && ["title", "dueOn", "status"].includes(sortBy)) {
     sortFilter[sortBy] = sortOrder === "desc" ? -1 : 1;
   } else {
-    sortFilter["priority"] = -1;
+    sortFilter["priority"] = 1;
   }
 
   console.log("filter : ", filter);
@@ -102,10 +93,10 @@ exports.getTODOs = async (req, res) => {
 exports.getTODO = async (req, res) => {
   const todoId = req.params._todoId;
 
-  const todo = await new Todo().getTodoById(todoId);
+  const todo = await new Todo().getTodo(todoId, req.user._id);
 
   if (!todo) {
-    res.status(404).json({ success: false, message: "TODO not found." });
+    return res.status(404).json({ success: false, message: "TODO not found." });
   }
 
   res.status(200).json({ success: true, todo });
@@ -125,7 +116,11 @@ exports.updateTODO = async (req, res) => {
   const todoId = req.params._todoId;
   const todoData = req.body;
 
-  const updatedTodo = await new Todo().updateTodo(todoId, todoData);
+  const updatedTodo = await new Todo().updateTodo(
+    todoId,
+    todoData,
+    req.user._id
+  );
 
   if (!updatedTodo) {
     return res.status(404).json({
@@ -144,9 +139,9 @@ exports.updateTODO = async (req, res) => {
 exports.deleteTODO = async (req, res) => {
   const todoId = req.params._todoId;
 
-  const isDeleted = await new Todo().deleteTodo(todoId);
+  const isDeleted = await new Todo().deleteTodo(todoId, req.user._id);
 
-  if (isDeleted.deletedCount !== 1) {
+  if (!isDeleted && isDeleted?.deletedCount !== 1) {
     return res.status(404).json({
       success: false,
       message: "TODO data not found..."

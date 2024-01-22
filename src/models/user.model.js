@@ -10,14 +10,12 @@ class User {
   organization;
   #collection;
 
-  constructor(
-    { name, email, password, organization } = {
-      user: "",
-      email: "",
-      password: "",
-      organization: ""
-    }
-  ) {
+  constructor({
+    name = "",
+    email = "",
+    password = "",
+    organization = ""
+  } = {}) {
     if (arguments.length === 0) {
       this.#collection = getDBInstance().collection("users");
       return;
@@ -56,7 +54,13 @@ class User {
   async getUserById(userId) {
     const user = await this.#collection.findOne(
       { _id: convertToObjectId(userId) },
-      { projection: { password: 0 } }
+      {
+        projection: {
+          password: 0,
+          resetPasswordExpires: 0,
+          resetPasswordToken: 0
+        }
+      }
     ); // have to use projection as parameter in findOne, but in find it can be used as method.
     return user;
   }
@@ -67,11 +71,7 @@ class User {
   }
 
   async updateUser(userId, updateData, currentEmail) {
-    console.log("updateData:", updateData);
-
     if (currentEmail && updateData.email && currentEmail !== updateData.email) {
-      console.log("here in if");
-
       const isExist = await this.#collection.findOne({
         email: updateData.email
       });
@@ -98,14 +98,25 @@ class User {
     if (updateData.organization !== undefined) {
       selectiveUpdate.organization = updateData.organization;
     }
+    if (updateData.resetPasswordToken !== undefined) {
+      selectiveUpdate.resetPasswordToken = updateData.resetPasswordToken;
+    }
+    if (updateData.resetPasswordExpires !== undefined) {
+      selectiveUpdate.resetPasswordExpires = updateData.resetPasswordExpires;
+    }
 
     const updatedUser = await this.#collection.findOneAndUpdate(
       { _id: convertToObjectId(userId) },
       { $set: selectiveUpdate },
-      { returnDocument: "after", projection: { password: 0 } }
+      {
+        returnDocument: "after",
+        projection: {
+          password: 0,
+          resetPasswordExpires: 0,
+          resetPasswordToken: 0
+        }
+      }
     );
-
-    console.log("updated user : ", updatedUser);
 
     return updatedUser;
   }
@@ -117,15 +128,15 @@ class User {
     return res;
   }
 
-  async resetPassword(userId, updatedPass) {
-    const user = await this.#collection.findOne({
-      _id: convertToObjectId(userId)
-    });
+  // async resetPassword(userId, updatedPass) {
+  //   const user = await this.#collection.findOne({
+  //     _id: convertToObjectId(userId)
+  //   });
 
-    user.password = updatedPass;
+  //   user.password = updatedPass;
 
-    await this.#collection.updateUser(user._id, user);
-  }
+  //   await this.#collection.updateUser(user._id, user);
+  // }
 }
 
 module.exports = User;

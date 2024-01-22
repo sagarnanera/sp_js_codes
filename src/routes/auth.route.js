@@ -6,7 +6,8 @@ const tryCatchHandler = require("../handlers/globalTryCatch.handler");
 const {
   loginValidator,
   registerValidator,
-  passwordValidator
+  passwordValidator,
+  emailValidator
 } = require("../validators/auth.validator");
 const { ForgotPass, ResetPass } = require("../controllers/auth.controller");
 const router = express.Router();
@@ -19,7 +20,9 @@ router
 router.route("/logout").post(authenticate, tryCatchHandler(LogOut));
 
 // forgot pass
-router.route("/forgot-password").post(tryCatchHandler(ForgotPass));
+router
+  .route("/forgot-password")
+  .post(validate(emailValidator), tryCatchHandler(ForgotPass));
 
 router
   .route("/reset-password/:token")

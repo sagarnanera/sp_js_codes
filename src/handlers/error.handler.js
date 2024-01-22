@@ -16,8 +16,6 @@ const notFoundHandler = (req, res, next) => {
 };
 
 const invalidJsonHandler = (err, req, res, next) => {
-  // console.log("here in json payload error :", err);
-
   if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
     return res
       .status(400)
@@ -29,7 +27,7 @@ const invalidJsonHandler = (err, req, res, next) => {
 
 // global error handler
 const ErrorHandler = (err, req, res, next) => {
-  console.log("here in global error :", err);
+  console.log("caught in globalErrorHandler :", err);
 
   if (err instanceof customError) {
     return res

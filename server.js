@@ -6,7 +6,6 @@ const PORT = process.env.PORT || 8080;
 connectDB()
   .then(() =>
     app.listen(PORT, (err) => {
-      // TODO : json schema validation for collections
 
       if (err) {
         return console.log({ msg: "Error starting server", err });

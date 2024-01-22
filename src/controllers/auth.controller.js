@@ -1,3 +1,4 @@
+const { customError } = require("../handlers/error.handler");
 const User = require("../models/user.model");
 const { genJWTToken } = require("../services/jwtService");
 const { hashPassword, compareHash } = require("../services/passwordService");
@@ -25,7 +26,7 @@ exports.Login = async (req, res) => {
   const isMatch = await compareHash(password, user.password);
 
   if (!isMatch) {
-    res
+    return res
       .status(400)
       .json({ success: false, message: "Invalid Credentials !!!" });
   }
@@ -37,7 +38,12 @@ exports.Login = async (req, res) => {
   // Sign token
   const token = genJWTToken(payload);
 
-  const { password: passwd, ...userData } = user;
+  const {
+    password: passwd,
+    resetPasswordExpires,
+    resetPasswordToken,
+    ...userData
+  } = user;
 
   return res.status(200).cookie("token", token, CookieOptions).json({
     success: true,
@@ -96,16 +102,14 @@ exports.ForgotPass = async (req, res) => {
   const token = crypto.randomUUID();
 
   const resetPasswordToken = token;
-  const resetPasswordExpires = Date.now() + 3600000;
+  const resetPasswordExpires = new Date(Date.now() + 3600000);
 
   await new User().updateUser(user._id, {
     resetPasswordExpires,
     resetPasswordToken
   });
 
-  const resetPassLink = `http://localhost:8080/api/support/reset-password/${token}`;
-
-  // console.log("reset pass token..", token);
+  const resetPassLink = `http://localhost:8080/api/auth/reset-password/${token}`;
 
   res.status(200).json({
     success: true,
@@ -115,16 +119,19 @@ exports.ForgotPass = async (req, res) => {
 };
 
 exports.ResetPass = async (req, res) => {
-  const { token } = req.param;
+  const { token } = req.params;
   const { password } = req.body;
 
   const user = await new User().getUser({
     resetPasswordToken: token,
-    resetPasswordExpires: { $gt: new Date.now() }
+    resetPasswordExpires: { $gt: new Date() }
   });
 
   if (!user) {
-    return res.status(404).json({ success: false, message: "User not found." });
+    throw new customError(
+      "Password reset-link expired or invalid token!!",
+      400
+    );
   }
 
   const newHash = await hashPassword(password);

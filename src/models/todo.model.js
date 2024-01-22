@@ -12,17 +12,15 @@ class Todo {
   priority;
   #collection;
 
-  constructor(
-    { userId, title, description, status, dueOn, tags, priority } = {
-      userId: "",
-      title: "",
-      description: "",
-      status: "",
-      dueOn: "",
-      tags: [],
-      priority: ""
-    }
-  ) {
+  constructor({
+    userId = "",
+    title = "",
+    description = "",
+    status = "pending",
+    dueOn = "",
+    tags = [],
+    priority = 1
+  } = {}) {
     if (arguments.length === 0) {
       this.#collection = getDBInstance().collection("todos");
       return;
@@ -58,13 +56,17 @@ class Todo {
   async getTODOs(filter, skip, limit, sortFilter) {
     const todoList = await this.#collection
       .find(filter)
-      .project({ title, createdOn, dueOn, description, status })
+      .project({
+        title: 1,
+        dueOn: 1,
+        status: 1,
+        priority: 1,
+        tags: 1
+      })
       .skip(skip)
       .limit(limit)
       .sort(sortFilter)
       .toArray();
-
-    console.log("todo after filters : ", todoList);
 
     return todoList;
   }
@@ -77,20 +79,16 @@ class Todo {
     return todo;
   }
 
-  async updateTodo(todoId, updateData) {
+  async updateTodo(todoId, updateData, userId) {
     if (updateData.dueOn) {
-      console.log("update todo", updateData);
-
       updateData.dueOn = new Date(updateData.dueOn);
     }
 
     const res = await this.#collection.findOneAndUpdate(
-      { _id: convertToObjectId(todoId) },
+      { _id: convertToObjectId(todoId), userId: convertToObjectId(userId) },
       { $set: updateData },
       { returnDocument: "after" }
     );
-
-    console.log(res);
 
     return res;
   }
