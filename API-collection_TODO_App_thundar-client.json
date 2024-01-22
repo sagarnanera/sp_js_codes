@@ -1,0 +1,324 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "TODO App",
+    "dateExported": "2024-01-22T18:28:18.808Z",
+    "version": "1.1",
+    "folders": [
+        {
+            "_id": "f3cfe47b-4b07-419a-b1e8-5f6c64822bfa",
+            "name": "auth",
+            "containerId": "",
+            "created": "2024-01-19T10:02:10.203Z",
+            "sortNum": 10000
+        },
+        {
+            "_id": "6cd1473b-119c-4baa-857f-f3b295408c5d",
+            "name": "user",
+            "containerId": "",
+            "created": "2024-01-19T10:02:13.178Z",
+            "sortNum": 20000
+        },
+        {
+            "_id": "8e5e924b-25d9-4a29-acc1-743eda9824eb",
+            "name": "todo",
+            "containerId": "",
+            "created": "2024-01-19T10:02:15.644Z",
+            "sortNum": 30000
+        }
+    ],
+    "requests": [
+        {
+            "_id": "0fa43fc8-3407-4126-bdfe-b527a06124cc",
+            "colId": "39919512-e3d4-440e-b0f0-47adce05f9ce",
+            "containerId": "8e5e924b-25d9-4a29-acc1-743eda9824eb",
+            "name": "todo - createTODO",
+            "url": "/api/todo/",
+            "method": "POST",
+            "sortNum": 5000,
+            "created": "2024-01-19T10:12:43.593Z",
+            "modified": "2024-01-22T18:19:29.231Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"title\":\"test todo 3 java\",\n  \"description\":\"this is test final\",\n  \"tags\":[\"javascript\"],\n  \"status\":\"processing\",\n  \"dueOn\":\"Mon feb 1 2024 21:54:12 GMT+0530\",\n  \"priority\":\"high\"\n} ",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "6dbf053a-4283-4176-b194-a924496b2e5f",
+            "colId": "39919512-e3d4-440e-b0f0-47adce05f9ce",
+            "containerId": "f3cfe47b-4b07-419a-b1e8-5f6c64822bfa",
+            "name": "auth - login",
+            "url": "/api/auth/login",
+            "method": "POST",
+            "sortNum": 10000,
+            "created": "2024-01-19T10:02:35.917Z",
+            "modified": "2024-01-22T18:26:11.195Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"email\":\"sagar@gmail.com\",\n  \"password\":\"000000\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "518acd28-52ad-442e-9252-6c9cf1c24a28",
+            "colId": "39919512-e3d4-440e-b0f0-47adce05f9ce",
+            "containerId": "6cd1473b-119c-4baa-857f-f3b295408c5d",
+            "name": "user - getUser",
+            "url": "/api/user/",
+            "method": "GET",
+            "sortNum": 10000,
+            "created": "2024-01-19T10:06:02.135Z",
+            "modified": "2024-01-19T12:12:34.543Z",
+            "headers": [],
+            "params": [],
+            "tests": [],
+            "preReq": {
+                "runRequests": [
+                    {
+                        "reqId": "6dbf053a-4283-4176-b194-a924496b2e5f",
+                        "colId": "39919512-e3d4-440e-b0f0-47adce05f9ce",
+                        "triggerCondition": "run-once",
+                        "triggerValue": ""
+                    }
+                ]
+            }
+        },
+        {
+            "_id": "05d720c5-9d53-4e68-9661-d53f0e87fee8",
+            "colId": "39919512-e3d4-440e-b0f0-47adce05f9ce",
+            "containerId": "8e5e924b-25d9-4a29-acc1-743eda9824eb",
+            "name": "todo - getTODOs",
+            "url": "/api/todo/",
+            "method": "GET",
+            "sortNum": 10000,
+            "created": "2024-01-19T10:11:00.135Z",
+            "modified": "2024-01-22T18:23:22.072Z",
+            "headers": [],
+            "params": [
+                {
+                    "name": "limit",
+                    "value": "1",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "skip",
+                    "value": "1",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "title",
+                    "value": "java",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "status",
+                    "value": "pending",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "tags",
+                    "value": "javascript",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "dueOn",
+                    "value": "Fri, 31 feb 2024 GMT",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "dueRange",
+                    "value": "Fri,  31 jan 2024 GMT:Fri, 31 Feb 2024 GMT",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "priority",
+                    "value": "low",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "sortBy",
+                    "value": "dueOn",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "sortOrder",
+                    "value": "desc",
+                    "isDisabled": true,
+                    "isPath": false
+                }
+            ],
+            "tests": []
+        },
+        {
+            "_id": "853bb881-8ca7-4ef3-820b-c3435abdc2af",
+            "colId": "39919512-e3d4-440e-b0f0-47adce05f9ce",
+            "containerId": "f3cfe47b-4b07-419a-b1e8-5f6c64822bfa",
+            "name": "auth - register",
+            "url": "/api/auth/register",
+            "method": "POST",
+            "sortNum": 20000,
+            "created": "2024-01-19T10:05:07.192Z",
+            "modified": "2024-01-22T18:23:51.788Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"name\":\"john final\",\n  \"email\":\"johnf@gmail.com\",\n  \"password\":\"Jf@123456\",\n  \"organization\":\"xyz solution llp\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "0348f3b2-d40f-42a6-b53a-ddd94fd169d1",
+            "colId": "39919512-e3d4-440e-b0f0-47adce05f9ce",
+            "containerId": "6cd1473b-119c-4baa-857f-f3b295408c5d",
+            "name": "user - updateUser",
+            "url": "/api/user/",
+            "method": "PUT",
+            "sortNum": 20000,
+            "created": "2024-01-19T10:06:37.966Z",
+            "modified": "2024-01-22T18:18:15.874Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"email\":\"johnf@gmail.com\",\n  \"organization\": \"SocialPilot Solutions LLP --132\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "c75dc21b-02e8-434f-9e1a-2a5939834141",
+            "colId": "39919512-e3d4-440e-b0f0-47adce05f9ce",
+            "containerId": "8e5e924b-25d9-4a29-acc1-743eda9824eb",
+            "name": "todo - getTODO",
+            "url": "/api/todo/65aeaa02c73e30a316e583ab",
+            "method": "GET",
+            "sortNum": 20000,
+            "created": "2024-01-19T10:11:51.548Z",
+            "modified": "2024-01-22T17:49:26.744Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "850077a6-a3e1-4a9b-a2dc-f5bf323a86ec",
+            "colId": "39919512-e3d4-440e-b0f0-47adce05f9ce",
+            "containerId": "f3cfe47b-4b07-419a-b1e8-5f6c64822bfa",
+            "name": "auth - logout",
+            "url": "/api/auth/logout",
+            "method": "POST",
+            "sortNum": 30000,
+            "created": "2024-01-19T10:05:45.491Z",
+            "modified": "2024-01-22T11:47:48.740Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "a8357aa8-5972-45d7-b611-48d72dc223dd",
+            "colId": "39919512-e3d4-440e-b0f0-47adce05f9ce",
+            "containerId": "6cd1473b-119c-4baa-857f-f3b295408c5d",
+            "name": "user - deleteUser",
+            "url": "/api/user/",
+            "method": "DELETE",
+            "sortNum": 30000,
+            "created": "2024-01-19T10:06:40.825Z",
+            "modified": "2024-01-22T11:37:35.150Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "0c4e45a2-1f85-4862-9c0e-709191977937",
+            "colId": "39919512-e3d4-440e-b0f0-47adce05f9ce",
+            "containerId": "8e5e924b-25d9-4a29-acc1-743eda9824eb",
+            "name": "todo - updateTODO",
+            "url": "/api/todo/65aeb18d316064f96150363c",
+            "method": "PUT",
+            "sortNum": 30000,
+            "created": "2024-01-19T10:12:21.377Z",
+            "modified": "2024-01-22T18:23:35.248Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"status\": \"pending\",\n  \"dueOn\":\"2024-02-28T16:24:12.000Z\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "696a15ca-3e1d-42b8-a6f6-0e3be570345e",
+            "colId": "39919512-e3d4-440e-b0f0-47adce05f9ce",
+            "containerId": "f3cfe47b-4b07-419a-b1e8-5f6c64822bfa",
+            "name": "auth - resetPassword",
+            "url": "/api/auth/reset-password/58072ab6-9f3b-439e-830c-9b2ff6826f5d",
+            "method": "POST",
+            "sortNum": 40000,
+            "created": "2024-01-19T10:09:34.985Z",
+            "modified": "2024-01-22T18:17:15.585Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"password\":\"J@f123456\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "e9d8b903-11db-4ec3-b124-6e71b271bc0c",
+            "colId": "39919512-e3d4-440e-b0f0-47adce05f9ce",
+            "containerId": "8e5e924b-25d9-4a29-acc1-743eda9824eb",
+            "name": "todo - deleteTODO",
+            "url": "/api/todo/65aeb18d316064f96150363c",
+            "method": "DELETE",
+            "sortNum": 50000,
+            "created": "2024-01-19T10:13:04.691Z",
+            "modified": "2024-01-22T18:23:42.408Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "4c1e6e6f-f401-4e19-8fe3-c21e4aa169da",
+            "colId": "39919512-e3d4-440e-b0f0-47adce05f9ce",
+            "containerId": "f3cfe47b-4b07-419a-b1e8-5f6c64822bfa",
+            "name": "auth - forgotPass",
+            "url": "/api/auth/forgot-password",
+            "method": "POST",
+            "sortNum": 50000,
+            "created": "2024-01-22T13:09:01.010Z",
+            "modified": "2024-01-22T18:16:29.331Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"email\":\"johnf@gmail.com\"\n}",
+                "form": []
+            },
+            "tests": []
+        }
+    ],
+    "settings": {
+        "options": {
+            "baseUrl": "http://localhost:8080"
+        }
+    }
+}

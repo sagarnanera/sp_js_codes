@@ -1,0 +1,345 @@
+{
+    "info": {
+        "_postman_id": "2a6b2b6a-390c-4a82-9412-12af08942fda",
+        "name": "TODO App",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "description": ""
+    },
+    "item": [
+        {
+            "name": "auth",
+            "item": [
+                {
+                    "name": "auth - login",
+                    "request": {
+                        "method": "POST",
+                        "url": {
+                            "raw": "/api/auth/login",
+                            "path": [
+                                "auth",
+                                "login"
+                            ],
+                            "host": [
+                                "api"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            },
+                            "raw": "{\n  \"email\":\"sagar@gmail.com\",\n  \"password\":\"000000\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "auth - register",
+                    "request": {
+                        "method": "POST",
+                        "url": {
+                            "raw": "/api/auth/register",
+                            "path": [
+                                "auth",
+                                "register"
+                            ],
+                            "host": [
+                                "api"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            },
+                            "raw": "{\n  \"name\":\"john final\",\n  \"email\":\"johnf@gmail.com\",\n  \"password\":\"Jf@123456\",\n  \"organization\":\"xyz solution llp\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "auth - logout",
+                    "request": {
+                        "method": "POST",
+                        "url": {
+                            "raw": "/api/auth/logout",
+                            "path": [
+                                "auth",
+                                "logout"
+                            ],
+                            "host": [
+                                "api"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "auth - resetPassword",
+                    "request": {
+                        "method": "POST",
+                        "url": {
+                            "raw": "/api/auth/reset-password/58072ab6-9f3b-439e-830c-9b2ff6826f5d",
+                            "path": [
+                                "auth",
+                                "reset-password",
+                                "58072ab6-9f3b-439e-830c-9b2ff6826f5d"
+                            ],
+                            "host": [
+                                "api"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            },
+                            "raw": "{\n  \"password\":\"J@f123456\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "auth - forgotPass",
+                    "request": {
+                        "method": "POST",
+                        "url": {
+                            "raw": "/api/auth/forgot-password",
+                            "path": [
+                                "auth",
+                                "forgot-password"
+                            ],
+                            "host": [
+                                "api"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            },
+                            "raw": "{\n  \"email\":\"johnf@gmail.com\"\n}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "user",
+            "item": [
+                {
+                    "name": "user - getUser",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "/api/user/",
+                            "path": [
+                                "user"
+                            ],
+                            "host": [
+                                "api"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "user - updateUser",
+                    "request": {
+                        "method": "PUT",
+                        "url": {
+                            "raw": "/api/user/",
+                            "path": [
+                                "user"
+                            ],
+                            "host": [
+                                "api"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            },
+                            "raw": "{\n  \"email\":\"johnf@gmail.com\",\n  \"organization\": \"SocialPilot Solutions LLP --132\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "user - deleteUser",
+                    "request": {
+                        "method": "DELETE",
+                        "url": {
+                            "raw": "/api/user/",
+                            "path": [
+                                "user"
+                            ],
+                            "host": [
+                                "api"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "todo",
+            "item": [
+                {
+                    "name": "todo - getTODOs",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "/api/todo/",
+                            "query": [
+                                {
+                                    "key": "limit",
+                                    "value": "1",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "skip",
+                                    "value": "1",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "title",
+                                    "value": "java",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "status",
+                                    "value": "pending",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "tags",
+                                    "value": "javascript",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "dueOn",
+                                    "value": "Fri, 31 feb 2024 GMT",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "dueRange",
+                                    "value": "Fri,  31 jan 2024 GMT:Fri, 31 Feb 2024 GMT",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "priority",
+                                    "value": "low",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "sortBy",
+                                    "value": "dueOn",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "sortOrder",
+                                    "value": "desc",
+                                    "disabled": true
+                                }
+                            ],
+                            "variable": [],
+                            "path": [
+                                "todo"
+                            ],
+                            "host": [
+                                "api"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "todo - getTODO",
+                    "request": {
+                        "method": "GET",
+                        "url": {
+                            "raw": "/api/todo/65aeaa02c73e30a316e583ab",
+                            "path": [
+                                "todo",
+                                "65aeaa02c73e30a316e583ab"
+                            ],
+                            "host": [
+                                "api"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "todo - updateTODO",
+                    "request": {
+                        "method": "PUT",
+                        "url": {
+                            "raw": "/api/todo/65aeb18d316064f96150363c",
+                            "path": [
+                                "todo",
+                                "65aeb18d316064f96150363c"
+                            ],
+                            "host": [
+                                "api"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            },
+                            "raw": "{\n  \"status\": \"pending\",\n  \"dueOn\":\"2024-02-28T16:24:12.000Z\"\n}"
+                        }
+                    }
+                },
+                {
+                    "name": "todo - createTODO",
+                    "request": {
+                        "method": "POST",
+                        "url": {
+                            "raw": "/api/todo/",
+                            "path": [
+                                "todo"
+                            ],
+                            "host": [
+                                "api"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            },
+                            "raw": "{\n  \"title\":\"test todo 3 java\",\n  \"description\":\"this is test final\",\n  \"tags\":[\"javascript\"],\n  \"status\":\"processing\",\n  \"dueOn\":\"Mon feb 1 2024 21:54:12 GMT+0530\",\n  \"priority\":\"high\"\n} "
+                        }
+                    }
+                },
+                {
+                    "name": "todo - deleteTODO",
+                    "request": {
+                        "method": "DELETE",
+                        "url": {
+                            "raw": "/api/todo/65aeb18d316064f96150363c",
+                            "path": [
+                                "todo",
+                                "65aeb18d316064f96150363c"
+                            ],
+                            "host": [
+                                "api"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}
